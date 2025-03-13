@@ -6,13 +6,14 @@
 /*   By: gkamanur <gkamanur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:45:07 by gkamanur          #+#    #+#             */
-/*   Updated: 2025/03/12 15:27:41 by gkamanur         ###   ########.fr       */
+/*   Updated: 2025/03/13 20:07:56 by gkamanur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
 # define MINITALK_H
-# define _POSIX_C_SOURCE 200809L
+// # define _POSIX_C_SOURCE 200809L
+#define _DEFAULT_SOURCE
 # include <signal.h>
 # include <stdlib.h>
 # include <unistd.h>

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server_pgm.c                                       :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gkamanur <gkamanur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:47:30 by gkamanur          #+#    #+#             */
-/*   Updated: 2025/03/12 16:41:54 by gkamanur         ###   ########.fr       */
+/*   Updated: 2025/03/13 19:58:59 by gkamanur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,24 @@ void bin2char(int sig_num, siginfo_t *info)
 
     if (pid == 0)
         pid = info->si_pid;
-
     if (sig_num == SIGUSR1)
         char_byte = (char_byte << 1) | 1;
     else if (sig_num == SIGUSR2)
         char_byte = (char_byte << 1);
-
     i++;
-
-    if (i == 8)  // Full character received
+    if (i == 8)
     {
-        if (char_byte == '\0') // End of message
+        if (char_byte == '\0')
         {
-            kill(pid, SIGUSR1);  // Acknowledge completion
+            kill(pid, SIGUSR1);
             pid = 0;
         }
         else
             write(1, &char_byte, 1);
-
         char_byte = 0;
         i = 0;
     }
-    kill(pid, SIGUSR2);  // Acknowledge received bit
+    kill(pid, SIGUSR2);
 }
 
 void sig_sigusr_serv(int bit, siginfo_t *info, void *dummy)

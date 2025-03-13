@@ -1,16 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client_pgm.c                                       :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gkamanur <gkamanur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/12 14:17:32 by gkamanur          #+#    #+#             */
-/*   Updated: 2025/03/13 20:10:20 by gkamanur         ###   ########.fr       */
+/*   Created: 2025/03/13 19:17:51 by gkamanur          #+#    #+#             */
+/*   Updated: 2025/03/13 20:11:50 by gkamanur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+static int receive_ind = 0;
+
+void sig_sigusr_client(int bit, siginfo_t *info, void *dummy)
+{
+    (void)dummy;
+    receive_ind = 1;
+
+    if (bit == SIGUSR1)
+    {
+        ft_putstr_fd("\nMessage acknowledged by server PId:", 1);
+        ft_putnbr_fd(info->si_pid, 1);
+        write(1, "\n", 1); 
+    }
+}
 
 void char2bin(int pid, char c)
 {
@@ -23,7 +38,9 @@ void char2bin(int pid, char c)
             kill(pid, SIGUSR1);
         if (((c >> bit) & 1) == 0)
             kill(pid, SIGUSR2);
-        usleep(500);
+        receive_ind = 0;
+        while (!receive_ind)
+            usleep(500);
     }
 }
 void    word(const char *str, const int pid)
@@ -35,7 +52,6 @@ void    word(const char *str, const int pid)
         char2bin(pid, str[i++]);
     char2bin(pid, 0);
 }
-
 int main(int ac, char **av)
 {
     int pid;
@@ -52,7 +68,8 @@ int main(int ac, char **av)
         ft_putstr_fd("Error: Invalid PID\n", 1);
         return (1);
     }
+    if (signal_handler(sig_sigusr_client) == -1)
+        return(-1);
     word(av[2], pid);
     return (0); 
 }
-
